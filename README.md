@@ -68,5 +68,6 @@ https://<YOUR_GITHUB_USERNAME>.github.io/<REPO_NAME>/?id=P001
 
 ## 👤 Author & Acknowledgments
 
-- **Project Lead**: Dr. Pete-Dirk Ueberham (馬培德 醫師)
+- **Creator & Developer**: Research Assistant (Concept Ideation, System Architecture & Web Development)
+- **Principal Investigator (PI)**: Dr. Pete-Dirk Ueberham (馬培德 醫師)
 - **Purpose**: Academic Research & Clinical Trial Protocol Tracking
