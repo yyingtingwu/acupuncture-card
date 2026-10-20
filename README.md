@@ -66,8 +66,8 @@ https://<YOUR_GITHUB_USERNAME>.github.io/<REPO_NAME>/?id=P001
 
 ---
 
-## 👤 Author & Acknowledgments
+## 👤 Credits & Acknowledgments
 
-- **Creator & Developer**: Research Assistant (Concept Ideation, System Architecture & Web Development)
-- **Principal Investigator (PI)**: Dr. Pete-Dirk Ueberham (馬培德 醫師)
+- **Lead Developer & Research Assistant**: Christine YingTing Wu (Project Concept, System Architecture, Frontend/Backend Development & Trial Operations)
+- **Principal Investigator (PI)**: Dr. Peter Karl Mayer / 馬培德 醫師 (Clinical Trial Grantee)
 - **Purpose**: Academic Research & Clinical Trial Protocol Tracking
