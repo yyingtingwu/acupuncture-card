@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>針灸療程追蹤卡</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .stamp-badge {
+      border: 3px double #b91c1c;
+      color: #b91c1c;
+      transform: rotate(-8deg);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 4px rgba(185, 28, 28, 0.4);
+      background-color: rgba(254, 242, 242, 0.7);
+    }
+  </style>
+</head>
+<body class="bg-amber-50 text-gray-800 font-sans min-h-screen pb-12">
+
+  <div class="max-w-md mx-auto p-4">
+    <!-- 頂部病患資訊卡 (1:1 對應紙本欄位) -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-amber-200">
+      <div class="flex justify-between items-center mb-3">
+        <h1 class="text-2xl font-black text-gray-900 tracking-wide">針灸療程追蹤卡</h1>
+        <span id="badgeProgress" class="bg-amber-100 text-amber-900 font-bold px-3 py-1 rounded-full text-sm">載入中...</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-x-2 gap-y-1.5 text-sm text-gray-700 bg-amber-50/70 p-3 rounded-xl border border-amber-100">
+        <div>編號：<span id="pId" class="font-bold text-gray-900">-</span></div>
+        <div>姓名：<span id="pName" class="font-bold text-gray-900">-</span></div>
+        <div>病歷號：<span id="pChart" class="font-bold text-gray-900">-</span></div>
+        <div>開始日期：<span id="pStart" class="font-bold text-gray-900">-</span></div>
+        <div class="col-span-2 text-xs text-amber-800 font-medium pt-1 border-t border-amber-200/50 mt-1">
+          ※ 針灸頻率：2次/週，請盡可能找同一位醫師進行針灸
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 格進度卡 -->
+    <div id="gridContainer" class="grid grid-cols-4 gap-2 mb-4">
+      <!-- 格子由 JS 自動載入 -->
+    </div>
+
+    <!-- 醫師蓋章核銷大按鈕 -->
+    <button onclick="openPinModal()" class="w-full bg-emerald-700 active:bg-emerald-800 text-white font-black text-lg py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 mb-5">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      本次就診 醫師蓋章核銷
+    </button>
+
+    <!-- 門診時間表 (紙本精緻排版) -->
+    <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 mb-4">
+      <div class="flex justify-between items-baseline mb-3">
+        <h2 class="text-base font-extrabold text-blue-700 flex items-center gap-1.5">
+          <span>📅</span> 【醫師門診時間表】
+        </h2>
+        <span class="text-xs text-gray-700 font-bold">計畫負責人：馬培德 醫師</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 text-center text-xs leading-normal">
+          <thead>
+            <tr class="bg-gray-100 text-gray-900 font-bold">
+              <th class="border border-gray-300 py-2 px-1 w-[18%]">時段</th>
+              <th class="border border-gray-300 py-2 px-1">週一</th>
+              <th class="border border-gray-300 py-2 px-1">週二</th>
+              <th class="border border-gray-300 py-2 px-1">週三</th>
+              <th class="border border-gray-300 py-2 px-1">週四</th>
+              <th class="border border-gray-300 py-2 px-1">週五</th>
+              <th class="border border-gray-300 py-2 px-1">週六</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-gray-300 py-3 px-1 font-bold bg-blue-50/50">
+                <div class="text-blue-700 font-black text-xs">早診</div>
+                <div class="text-[10px] text-gray-500 font-semibold tracking-tighter">08:30~12:00</div>
+              </td>
+              <td class="border border-gray-300 p-1"></td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap">
+                <div class="text-gray-900">蘇豐棋</div>
+                <div class="text-blue-600 font-black">陳沛先</div>
+              </td>
+              <td class="border border-gray-300 p-1 font-bold text-gray-900 whitespace-nowrap">蘇豐棋</td>
+              <td class="border border-gray-300 p-1"></td>
+              <td class="border border-gray-300 p-1 font-bold text-gray-900 whitespace-nowrap">陳沛先</td>
+              <td class="border border-gray-300 p-1"></td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 py-3 px-1 font-bold bg-blue-50/50">
+                <div class="text-blue-700 font-black text-xs">午診</div>
+                <div class="text-[10px] text-gray-500 font-semibold tracking-tighter">13:30~17:00</div>
+              </td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap space-y-0.5">
+                <div class="text-gray-900">蘇豐棋</div>
+                <div class="text-gray-900">馬培德</div>
+                <div class="text-gray-900">陳沛先</div>
+              </td>
+              <td class="border border-gray-300 p-1 font-bold text-gray-900 whitespace-nowrap">蘇豐棋</td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap space-y-0.5">
+                <div class="text-gray-900">蘇豐棋</div>
+                <div class="text-gray-900">馬培德</div>
+                <div class="text-gray-900">陳沛先</div>
+              </td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap space-y-0.5">
+                <div class="text-blue-600 font-black">馬培德</div>
+                <div class="text-gray-900">陳沛先</div>
+              </td>
+              <td class="border border-gray-300 p-1"></td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap space-y-0.5">
+                <div class="text-gray-900">蘇豐棋</div>
+                <div class="text-gray-900">陳沛先</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="border border-gray-300 py-3 px-1 font-bold bg-blue-50/50">
+                <div class="text-blue-700 font-black text-xs">晚診</div>
+                <div class="text-[10px] text-gray-500 font-semibold tracking-tighter">18:00~21:00</div>
+              </td>
+              <td class="border border-gray-300 p-1 font-black text-emerald-700 whitespace-nowrap">陳沛先</td>
+              <td class="border border-gray-300 p-1"></td>
+              <td class="border border-gray-300 p-1 font-bold text-gray-900 whitespace-nowrap">陳沛先</td>
+              <td class="border border-gray-300 p-1 font-bold whitespace-nowrap space-y-0.5">
+                <div class="text-gray-900">蘇豐棋</div>
+                <div class="text-gray-900">馬培德</div>
+                <div class="text-emerald-700 font-black">陳沛先</div>
+              </td>
+              <td class="border border-gray-300 p-1"></td>
+              <td class="border border-gray-300 p-1"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="mt-2.5 text-xs flex flex-wrap gap-x-4 gap-y-1 justify-center font-bold">
+          <span class="text-gray-900">※ 黑色字體為美德大樓看診</span>
+          <span class="text-blue-600">※ 藍色字體為水湳看診</span>
+          <span class="text-emerald-700">※ 綠色字體為東區分院看診</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 注意事項與警語 -->
+    <div class="bg-amber-100/60 rounded-2xl p-4 border border-amber-200 text-xs text-gray-700 space-y-1.5 leading-relaxed">
+      <div class="font-bold text-gray-900 text-sm mb-1">📌 就醫注意事項</div>
+      <p>※ 請持本頁面直接找醫師進行針灸治療。</p>
+      <p>※ 每次針灸時請務必出示此卡予醫師完成線上簽章。</p>
+      <p>※ 本卡及針灸僅供學術計畫追蹤使用，請盡速聯絡馬培德醫師的助理。</p>
+      <p>※ 國定假日休診；停診請依最新公告為準。</p>
+      <p>※ 衛教叮嚀：針灸後局部微酸脹屬正常；如有持續暈針、瘀血，請回報專案助理。</p>
+      <p class="font-bold text-red-600">※ 最後一次（第12次）針灸結束後，請與專案助理聯繫確認結案。</p>
+    </div>
+  </div>
+
+  <!-- 4 位數 PIN 碼彈窗 -->
+  <div id="pinModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-6 text-center shadow-2xl">
+      <h3 class="text-lg font-bold text-gray-900 mb-1">醫師蓋章核銷</h3>
+      <p class="text-xs text-gray-500 mb-4">請醫師輸入 4 位數專屬代碼</p>
+
+      <div class="flex justify-center mb-6">
+        <input type="password" id="pinInput" maxlength="4" inputmode="numeric" class="text-center text-3xl font-black tracking-widest w-40 py-2 border-b-2 border-emerald-600 focus:outline-none" placeholder="••••">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="closePinModal()" class="py-2.5 rounded-xl border border-gray-300 font-bold text-gray-600">取消</button>
+        <button onclick="submitPin()" class="py-2.5 rounded-xl bg-emerald-700 text-white font-bold">確認核銷</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ⬇️ 請將此處引號內的網址更換為您部署後得到的 Apps Script Web app URL
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyfaPMUiKFQKKU_TTXkmlPjPSYYVCkzZqhA_iq9c8qqD7erHXT3fJpJCMjaS_cXlbxfeg/exec";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get("id") || "P001"; // 預設讀取 P001
+
+    let patientData = null;
+
+    async function loadData() {
+      try {
+        const res = await fetch(`${GAS_URL}?id=${patientId}`);
+        const data = await res.json();
+        if (data.status === "success") {
+          patientData = data;
+          renderUI();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        console.error("載入失敗", err);
+      }
+    }
+
+    function renderUI() {
+      document.getElementById("pId").innerText = patientData.id;
+      document.getElementById("pName").innerText = patientData.name;
+      document.getElementById("pChart").innerText = patientData.chartNo || "無";
+      document.getElementById("pStart").innerText = patientData.startDate || "無";
+
+      const completedCount = patientData.records.filter(r => r.doctor).length;
+      document.getElementById("badgeProgress").innerText = `已完成 ${completedCount} / 12 次`;
+
+      const container = document.getElementById("gridContainer");
+      container.innerHTML = "";
+
+      for (let i = 0; i < 12; i++) {
+        const item = patientData.records[i] || {};
+        const isDone = !!item.doctor;
+        const isSpecial12 = (i === 11);
+
+        const card = document.createElement("div");
+        card.className = `aspect-[3/4] rounded-xl p-1 flex flex-col justify-between items-center text-center border relative ${
+          isDone ? 'bg-red-50 border-red-200' : (isSpecial12 ? 'bg-amber-100 border-red-400' : 'bg-white border-amber-200')
+        }`;
+
+        card.innerHTML = `
+          <div class="text-[11px] font-bold ${isSpecial12 ? 'text-red-600' : 'text-gray-700'}">第${i+1}次</div>
+          ${isDone ? `
+            <div class="stamp-badge w-12 h-12">
+              <span class="text-[9px] font-black leading-none">${item.doctor}</span>
+              <span class="text-[7px] scale-90">${item.time ? item.time.slice(5, 10) : ''}</span>
+            </div>
+          ` : `
+            <div class="w-10 h-10 border border-dashed border-gray-300 rounded-full flex items-center justify-center text-[9px] text-gray-400">
+              待核銷
+            </div>
+          `}
+          <div class="text-[9px] text-gray-400">${item.time ? item.time.slice(5, 10) : ''}</div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function openPinModal() {
+      document.getElementById("pinInput").value = "";
+      document.getElementById("pinModal").classList.remove("hidden");
+      document.getElementById("pinInput").focus();
+    }
+
+    function closePinModal() {
+      document.getElementById("pinModal").classList.add("hidden");
+    }
+
+    async function submitPin() {
+      const pin = document.getElementById("pinInput").value;
+      if (pin.length !== 4) {
+        alert("請輸入 4 位數 PIN 碼");
+        return;
+      }
+
+      closePinModal();
+      try {
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          body: JSON.stringify({ id: patientId, pin: pin })
+        });
+        const result = await res.json();
+        if (result.status === "success") {
+          alert(`核銷成功！執行醫師：${result.doctor}`);
+          loadData();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        alert("核銷失敗，請確認網路連線");
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
