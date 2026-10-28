@@ -200,7 +200,18 @@
       document.getElementById("pId").innerText = patientData.id;
       document.getElementById("pName").innerText = patientData.name;
       document.getElementById("pChart").innerText = patientData.chartNo || "無";
-      document.getElementById("pStart").innerText = patientData.startDate || "無";
+      // 自動把長字串格式化為乾淨的 YYYY/MM/DD
+let cleanDate = patientData.startDate || "無";
+if (cleanDate !== "無") {
+  const d = new Date(cleanDate);
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    cleanDate = `${y}/${m}/${day}`;
+  }
+}
+document.getElementById("pStart").innerText = cleanDate;
 
       const completedCount = patientData.records.filter(r => r.doctor).length;
       document.getElementById("badgeProgress").innerText = `已完成 ${completedCount} / 12 次`;
